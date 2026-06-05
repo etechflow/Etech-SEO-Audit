@@ -9,6 +9,8 @@
                 <item name="product_meta_title_length" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\MetaTitleLength</item>
                 <item name="product_thin_description" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\ThinDescription</item>
                 <item name="product_missing_image" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\MissingImage</item>
+                <item name="product_orphaned" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\OrphanedProduct</item>
+                <item name="category_empty" xsi:type="object">Etechflow\SeoAudit\Model\Check\Category\EmptyCategory</item>
                 <item name="category_missing_meta_title" xsi:type="object">Etechflow\SeoAudit\Model\Check\Category\MissingMetaTitle</item>
                 <item name="category_missing_meta_description" xsi:type="object">Etechflow\SeoAudit\Model\Check\Category\MissingMetaDescription</item>
                 <item name="cms_missing_meta_title" xsi:type="object">Etechflow\SeoAudit\Model\Check\Cms\MissingMetaTitle</item>
@@ -21,6 +23,19 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="etechflow_seoaudit_scan" xsi:type="object">Etechflow\SeoAudit\Console\Command\ScanCommand</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Etechflow\SeoAudit\Model\ResourceModel\Issue\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">etechflow_seoaudit_issue</argument>
+            <argument name="resourceModel" xsi:type="string">Etechflow\SeoAudit\Model\ResourceModel\Issue</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="etechflow_seoaudit_issue_listing_data_source" xsi:type="string">Etechflow\SeoAudit\Model\ResourceModel\Issue\Grid\Collection</item>
             </argument>
         </arguments>
     </type>
