@@ -67,7 +67,7 @@ class Dashboard extends Template
         return $html;
     }
 
-    private function row(string $label, int $n, string $color): string
+    private function row(\Magento\Framework\Phrase|string $label, int $n, string $color): string
     {
         return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0f0f0">'
             . '<span>' . $this->escapeHtml($label) . '</span>'
