@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <etechflow_seoaudit>
+            <general>
+                <enabled>0</enabled>
+                <title_min>20</title_min>
+                <title_max>60</title_max>
+                <description_min>70</description_min>
+                <description_max>160</description_max>
+                <thin_description>150</thin_description>
+            </general>
+        </etechflow_seoaudit>
+    </default>
+</config>

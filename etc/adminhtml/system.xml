@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="etechflow" translate="label" sortOrder="400">
+            <label>Etechflow</label>
+        </tab>
+        <section id="etechflow_seoaudit" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+            <label>SEO Audit</label>
+            <tab>etechflow</tab>
+            <resource>Etechflow_SeoAudit::config</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1">
+                <label>Thresholds</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Master switch for the audit feature.</comment>
+                </field>
+                <field id="title_min" translate="label" type="text" sortOrder="20" showInDefault="1">
+                    <label>Meta title min length</label>
+                </field>
+                <field id="title_max" translate="label" type="text" sortOrder="30" showInDefault="1">
+                    <label>Meta title max length</label>
+                </field>
+                <field id="description_min" translate="label" type="text" sortOrder="40" showInDefault="1">
+                    <label>Meta description min length</label>
+                </field>
+                <field id="description_max" translate="label" type="text" sortOrder="50" showInDefault="1">
+                    <label>Meta description max length</label>
+                </field>
+                <field id="thin_description" translate="label" type="text" sortOrder="60" showInDefault="1">
+                    <label>Thin product description threshold (chars)</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

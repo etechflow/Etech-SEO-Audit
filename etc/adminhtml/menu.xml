@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Etechflow_SeoAudit::audit" title="SEO Audit" module="Etechflow_SeoAudit"
+             sortOrder="95" parent="Magento_Backend::content" action="seoaudit/index/index"
+             resource="Etechflow_SeoAudit::audit"/>
+        <add id="Etechflow_SeoAudit::config" title="SEO Audit Config" module="Etechflow_SeoAudit"
+             sortOrder="96" parent="Magento_Backend::content"
+             action="adminhtml/system_config/edit/section/etechflow_seoaudit" resource="Etechflow_SeoAudit::config"/>
+    </menu>
+</config>

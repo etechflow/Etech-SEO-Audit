@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Etechflow\SeoAudit\Model\Scanner">
+        <arguments>
+            <argument name="checks" xsi:type="array">
+                <item name="product_missing_meta_title" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\MissingMetaTitle</item>
+                <item name="product_missing_meta_description" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\MissingMetaDescription</item>
+                <item name="product_duplicate_meta_title" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\DuplicateMetaTitle</item>
+                <item name="product_meta_title_length" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\MetaTitleLength</item>
+                <item name="product_thin_description" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\ThinDescription</item>
+                <item name="product_missing_image" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\MissingImage</item>
+                <item name="category_missing_meta_title" xsi:type="object">Etechflow\SeoAudit\Model\Check\Category\MissingMetaTitle</item>
+                <item name="category_missing_meta_description" xsi:type="object">Etechflow\SeoAudit\Model\Check\Category\MissingMetaDescription</item>
+                <item name="cms_missing_meta_title" xsi:type="object">Etechflow\SeoAudit\Model\Check\Cms\MissingMetaTitle</item>
+                <item name="links_broken_404" xsi:type="object">Etechflow\SeoAudit\Model\Check\Links\Broken404</item>
+                <item name="links_redirect_chain" xsi:type="object">Etechflow\SeoAudit\Model\Check\Links\RedirectChain</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="etechflow_seoaudit_scan" xsi:type="object">Etechflow\SeoAudit\Console\Command\ScanCommand</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

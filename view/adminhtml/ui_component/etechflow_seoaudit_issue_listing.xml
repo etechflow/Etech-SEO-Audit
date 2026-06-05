@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">etechflow_seoaudit_issue_listing.etechflow_seoaudit_issue_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>etechflow_seoaudit_issue_columns</spinner>
+        <deps>
+            <dep>etechflow_seoaudit_issue_listing.etechflow_seoaudit_issue_listing_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="etechflow_seoaudit_issue_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">issue_id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Etechflow_SeoAudit::audit</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="etechflow_seoaudit_issue_listing_data_source">
+            <settings>
+                <requestFieldName>issue_id</requestFieldName>
+                <primaryFieldName>issue_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <filters name="listing_filters"/>
+        <paging name="listing_paging"/>
+        <exportButton name="export_button"/>
+    </listingToolbar>
+    <columns name="etechflow_seoaudit_issue_columns">
+        <column name="severity">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Severity</label>
+            </settings>
+        </column>
+        <column name="category">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Area</label>
+            </settings>
+        </column>
+        <column name="check_label">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Check</label>
+            </settings>
+        </column>
+        <column name="entity_type">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Type</label>
+            </settings>
+        </column>
+        <column name="identifier">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Entity</label>
+            </settings>
+        </column>
+        <column name="detail">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Detail</label>
+            </settings>
+        </column>
+        <column name="fix_hint">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Fix with</label>
+            </settings>
+        </column>
+        <column name="created_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <filter>dateRange</filter>
+                <dataType>date</dataType>
+                <label translate="true">Detected</label>
+            </settings>
+        </column>
+        <actionsColumn name="actions" class="Etechflow\SeoAudit\Ui\Component\Listing\Column\EntityLink">
+            <settings>
+                <indexField>issue_id</indexField>
+            </settings>
+        </actionsColumn>
+    </columns>
+</listing>

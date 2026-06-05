@@ -1,0 +1,25 @@
+{
+    "etechflow_seoaudit_issue": {
+        "column": {
+            "issue_id": true,
+            "check_code": true,
+            "category": true,
+            "severity": true,
+            "entity_type": true,
+            "entity_id": true,
+            "identifier": true,
+            "detail": true,
+            "store_id": true,
+            "created_at": true,
+            "check_label": true,
+            "fix_hint": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        },
+        "index": {
+            "ETECHFLOW_SEOAUDIT_ISSUE_CHECK_SEVERITY": true,
+            "ETECHFLOW_SEOAUDIT_ISSUE_ENTITY": true
+        }
+    }
+}

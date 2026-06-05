@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="etechflow_seoaudit_issue" resource="default" engine="innodb" comment="SEO Audit detected issues">
+        <column xsi:type="int" name="issue_id" unsigned="true" nullable="false" identity="true" comment="Issue ID"/>
+        <column xsi:type="varchar" name="check_code" nullable="false" length="64" comment="Check code"/>
+        <column xsi:type="varchar" name="category" nullable="false" length="32" comment="Category: meta/content/links/schema"/>
+        <column xsi:type="varchar" name="severity" nullable="false" length="16" comment="critical/warning/notice"/>
+        <column xsi:type="varchar" name="entity_type" nullable="false" length="32" comment="product/category/cms_page/url"/>
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="true" comment="Entity ID"/>
+        <column xsi:type="varchar" name="identifier" nullable="true" length="255" comment="SKU/url-key/title for display"/>
+        <column xsi:type="text" name="detail" nullable="true" comment="Human-readable detail"/>
+        <column xsi:type="varchar" name="check_label" nullable="true" length="255" comment="Check label"/>
+        <column xsi:type="varchar" name="fix_hint" nullable="true" length="128" comment="Suite module that fixes it"/>
+        <column xsi:type="int" name="store_id" unsigned="true" nullable="false" default="0" comment="Store ID"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Detected at"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="issue_id"/>
+        </constraint>
+        <index referenceId="ETECHFLOW_SEOAUDIT_ISSUE_CHECK_SEVERITY" indexType="btree">
+            <column name="check_code"/>
+            <column name="severity"/>
+        </index>
+        <index referenceId="ETECHFLOW_SEOAUDIT_ISSUE_ENTITY" indexType="btree">
+            <column name="entity_type"/>
+            <column name="entity_id"/>
+        </index>
+    </table>
+</schema>
