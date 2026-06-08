@@ -2,6 +2,15 @@
 
 All notable changes to this module are documented here.
 
+## v1.4.0 — 2026-06-08
+
+Added **duplication & on-page** checks:
+
+- **`product_duplicate_meta_description`** (warning) — products sharing an identical meta description.
+- **`product_meta_description_length`** (notice) — meta descriptions outside the configured length range.
+- **`product_missing_image_alt`** (notice) — visible products with a base image but no alt text (image label).
+- **`onpage_h1`** (warning, rendered) — product pages with a missing or duplicate H1.
+
 ## v1.3.0 — 2026-06-08
 
 Added **visibility** rendered-HTML checks:

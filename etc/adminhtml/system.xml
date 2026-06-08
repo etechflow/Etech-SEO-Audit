@@ -80,6 +80,14 @@
                     <comment>Flags product pages with no Product JSON-LD structured data.</comment>
                 </field>
             </group>
+            <group id="onpage" translate="label" type="text" sortOrder="70" showInDefault="1">
+                <label>On-page Check (H1)</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1">
+                    <label>Enable H1 check</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Fetches sample product pages and flags a missing or duplicate H1 heading.</comment>
+                </field>
+            </group>
         </section>
     </system>
 </config>

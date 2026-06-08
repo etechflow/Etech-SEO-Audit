@@ -13,6 +13,7 @@ class Config
     private const I = 'etechflow_seoaudit/indexability/';
     private const S = 'etechflow_seoaudit/social/';
     private const G = 'etechflow_seoaudit/schema/';
+    private const O = 'etechflow_seoaudit/onpage/';
 
     public function __construct(private readonly ScopeConfigInterface $scopeConfig)
     {
@@ -86,5 +87,10 @@ class Config
     public function schemaCheckEnabled(): bool
     {
         return $this->scopeConfig->isSetFlag(self::G . 'enabled');
+    }
+
+    public function onpageCheckEnabled(): bool
+    {
+        return $this->scopeConfig->isSetFlag(self::O . 'enabled');
     }
 }

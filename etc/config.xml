@@ -27,6 +27,9 @@
             <schema>
                 <enabled>1</enabled>
             </schema>
+            <onpage>
+                <enabled>1</enabled>
+            </onpage>
         </etechflow_seoaudit>
     </default>
 </config>

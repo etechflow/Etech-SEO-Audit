@@ -22,6 +22,10 @@
                 <item name="indexability_sitemap_health" xsi:type="object">Etechflow\SeoAudit\Model\Check\Indexability\SitemapHealth</item>
                 <item name="social_open_graph" xsi:type="object">Etechflow\SeoAudit\Model\Check\Social\OpenGraph</item>
                 <item name="schema_product_jsonld" xsi:type="object">Etechflow\SeoAudit\Model\Check\Schema\StructuredData</item>
+                <item name="product_duplicate_meta_description" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\DuplicateMetaDescription</item>
+                <item name="product_meta_description_length" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\MetaDescriptionLength</item>
+                <item name="product_missing_image_alt" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\MissingImageAlt</item>
+                <item name="onpage_h1" xsi:type="object">Etechflow\SeoAudit\Model\Check\Onpage\Heading</item>
             </argument>
         </arguments>
     </type>
