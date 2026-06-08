@@ -21,6 +21,12 @@
             <indexability>
                 <enabled>1</enabled>
             </indexability>
+            <social>
+                <enabled>1</enabled>
+            </social>
+            <schema>
+                <enabled>1</enabled>
+            </schema>
         </etechflow_seoaudit>
     </default>
 </config>

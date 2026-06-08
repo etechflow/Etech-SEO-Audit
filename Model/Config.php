@@ -11,6 +11,8 @@ class Config
     private const F = 'etechflow_seoaudit/fetch/';
     private const C = 'etechflow_seoaudit/canonical/';
     private const I = 'etechflow_seoaudit/indexability/';
+    private const S = 'etechflow_seoaudit/social/';
+    private const G = 'etechflow_seoaudit/schema/';
 
     public function __construct(private readonly ScopeConfigInterface $scopeConfig)
     {
@@ -74,5 +76,15 @@ class Config
     public function indexabilityCheckEnabled(): bool
     {
         return $this->scopeConfig->isSetFlag(self::I . 'enabled');
+    }
+
+    public function socialCheckEnabled(): bool
+    {
+        return $this->scopeConfig->isSetFlag(self::S . 'enabled');
+    }
+
+    public function schemaCheckEnabled(): bool
+    {
+        return $this->scopeConfig->isSetFlag(self::G . 'enabled');
     }
 }

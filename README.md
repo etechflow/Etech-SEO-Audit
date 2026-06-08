@@ -11,6 +11,8 @@ On-demand **SEO health audit + score** for Magento 2. Scans your products, categ
 | **Links** | logged **404s** and **redirect chains** (via Etechflow_RedirectManager — soft dependency) |
 | **Canonical** | **rendered-HTML** check on a sample of product pages: missing canonical, duplicate canonical tags, or a canonical that **points to a URL which redirects (301/302) or 404s** — the kind of render-time fault data-only checks can't see |
 | **Indexability** | **rendered-HTML** checks for pages quietly lost from Google: live (200) pages returning **noindex** (robots meta or `X-Robots-Tag`), live catalogue URLs **blocked by robots.txt**, and **dead/redirecting URLs listed in the XML sitemap** (plus a sitemap not referenced in robots.txt) |
+| **Social** | **rendered-HTML** check: product pages missing **Open Graph / Twitter Card** tags (how links look when shared), or an `og:url` on a **different domain** than the store (catches dev/staging-domain leakage after a domain swap) |
+| **Schema** | **rendered-HTML** check: product pages with **no Product JSON-LD** structured data (Google's preferred format for rich results — price, availability, ratings). Handles `@graph` and arrays |
 
 Each check is a small class implementing `Api\CheckInterface`, registered into the scanner pool in `etc/di.xml` — so you can add your own checks without touching core.
 

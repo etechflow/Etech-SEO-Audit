@@ -64,6 +64,22 @@
                     <comment>Flags pages hidden from Google (noindex), live URLs blocked by robots.txt, and dead/redirecting URLs in the XML sitemap.</comment>
                 </field>
             </group>
+            <group id="social" translate="label" type="text" sortOrder="50" showInDefault="1">
+                <label>Social Tags Check</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1">
+                    <label>Enable social tags check</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Flags product pages missing Open Graph / Twitter Card tags, or an og:url on the wrong domain.</comment>
+                </field>
+            </group>
+            <group id="schema" translate="label" type="text" sortOrder="60" showInDefault="1">
+                <label>Structured Data Check</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1">
+                    <label>Enable structured-data check</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Flags product pages with no Product JSON-LD structured data.</comment>
+                </field>
+            </group>
         </section>
     </system>
 </config>

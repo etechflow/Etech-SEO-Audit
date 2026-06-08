@@ -2,6 +2,13 @@
 
 All notable changes to this module are documented here.
 
+## v1.3.0 — 2026-06-08
+
+Added **visibility** rendered-HTML checks:
+
+- **`social_open_graph`** (warning) — product pages missing Open Graph / Twitter Card tags, or an `og:url` whose domain differs from the store domain (catches dev/staging-domain leakage after a base-URL/domain swap).
+- **`schema_product_jsonld`** (warning) — product pages with no Product JSON-LD structured data. Walks `@graph` containers and arrays to find a Product `@type`.
+
 ## v1.2.0 — 2026-06-08
 
 Added **indexability checks** (the "hidden from Google" catchers) and refactored the HTTP fetching into a shared `Service\HtmlFetcher`:
