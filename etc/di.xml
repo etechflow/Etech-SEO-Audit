@@ -16,6 +16,7 @@
                 <item name="cms_missing_meta_title" xsi:type="object">Etechflow\SeoAudit\Model\Check\Cms\MissingMetaTitle</item>
                 <item name="links_broken_404" xsi:type="object">Etechflow\SeoAudit\Model\Check\Links\Broken404</item>
                 <item name="links_redirect_chain" xsi:type="object">Etechflow\SeoAudit\Model\Check\Links\RedirectChain</item>
+                <item name="product_canonical_health" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\CanonicalHealth</item>
             </argument>
         </arguments>
     </type>

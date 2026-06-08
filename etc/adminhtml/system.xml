@@ -31,6 +31,30 @@
                     <label>Thin product description threshold (chars)</label>
                 </field>
             </group>
+            <group id="canonical" translate="label" type="text" sortOrder="20" showInDefault="1">
+                <label>Canonical Health Check</label>
+                <comment>Fetches a sample of rendered product pages and validates the canonical tag (missing / duplicate / points to a redirect or 404). The only check that reads live HTML.</comment>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1">
+                    <label>Enable canonical check</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="sample_size" translate="label" type="text" sortOrder="20" showInDefault="1">
+                    <label>Sample size (pages to fetch)</label>
+                    <comment>How many product pages to fetch per scan (1-200). HTTP-based, so keep it modest.</comment>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+                <field id="fetch_base_url" translate="label" type="text" sortOrder="30" showInDefault="1">
+                    <label>Fetch base URL (optional)</label>
+                    <comment><![CDATA[Internal origin to fetch from when the public URL is behind Varnish / basic-auth / an edge gate, e.g. <code>http://varnish:80</code>. Leave blank to use the store's secure base URL. The store domain is sent as the Host header.]]></comment>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+                <field id="basic_auth" translate="label" type="obscure" sortOrder="40" showInDefault="1">
+                    <label>Basic auth (optional, user:pass)</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <comment>HTTP basic-auth credentials for a gated origin, as user:pass.</comment>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+            </group>
         </section>
     </system>
 </config>

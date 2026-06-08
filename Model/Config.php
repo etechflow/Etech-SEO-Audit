@@ -8,6 +8,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 class Config
 {
     private const P = 'etechflow_seoaudit/general/';
+    private const C = 'etechflow_seoaudit/canonical/';
 
     public function __construct(private readonly ScopeConfigInterface $scopeConfig)
     {
@@ -41,5 +42,26 @@ class Config
     public function thinDescription(): int
     {
         return (int) ($this->scopeConfig->getValue(self::P . 'thin_description') ?: 150);
+    }
+
+    public function canonicalCheckEnabled(): bool
+    {
+        return $this->scopeConfig->isSetFlag(self::C . 'enabled');
+    }
+
+    public function canonicalSampleSize(): int
+    {
+        return max(1, min(200, (int) ($this->scopeConfig->getValue(self::C . 'sample_size') ?: 25)));
+    }
+
+    public function canonicalFetchBaseUrl(): string
+    {
+        return trim((string) $this->scopeConfig->getValue(self::C . 'fetch_base_url'));
+    }
+
+    public function canonicalBasicAuth(): ?string
+    {
+        $v = trim((string) $this->scopeConfig->getValue(self::C . 'basic_auth'));
+        return $v !== '' ? $v : null;
     }
 }
