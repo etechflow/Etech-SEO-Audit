@@ -7,7 +7,7 @@ On-demand **SEO health audit + score** for Magento 2. Scans your products, categ
 | Area | Checks |
 |------|--------|
 | **Meta** | products/categories/CMS missing meta title or description, **duplicate** meta titles **or descriptions**, meta titles/descriptions too short/long |
-| **Content** | thin or missing product descriptions, products with no base image, products whose base image has no **alt text**, and (rendered) pages with a **missing or duplicate H1** |
+| **Content** | thin or missing product descriptions, products with no base image, and (rendered) pages whose **main image has no alt text** or with a **missing/duplicate H1** |
 | **Links** | logged **404s** and **redirect chains** (via Etechflow_RedirectManager — soft dependency) |
 | **Canonical** | **rendered-HTML** check on a sample of product pages: missing canonical, duplicate canonical tags, or a canonical that **points to a URL which redirects (301/302) or 404s** — the kind of render-time fault data-only checks can't see |
 | **Indexability** | **rendered-HTML** checks for pages quietly lost from Google: live (200) pages returning **noindex** (robots meta or `X-Robots-Tag`), live catalogue URLs **blocked by robots.txt**, and **dead/redirecting URLs listed in the XML sitemap** (plus a sitemap not referenced in robots.txt) |

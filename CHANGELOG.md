@@ -2,6 +2,10 @@
 
 All notable changes to this module are documented here.
 
+## v1.4.1 — 2026-06-08
+
+Fixed a false-positive: the image-alt check now reads **rendered HTML** instead of the `image_label` DB attribute. The old check (`product_missing_image_alt`) flagged every product with an empty `image_label`, but most themes (Hyvä, Luma) fall back to the product **name** for the `<img alt>`, so an empty label rarely means a truly missing alt — it over-reported badly (e.g. ~2,900 false notices on a Hyvä store). Replaced with `content_image_alt`: it samples product pages and flags a page only when a product image is present but **neither** a gallery caption/label **nor** an `<img alt>` supplies alt text (gated by the same on-page/page-fetch settings as the H1 check).
+
 ## v1.4.0 — 2026-06-08
 
 Added **duplication & on-page** checks:

@@ -24,7 +24,7 @@
                 <item name="schema_product_jsonld" xsi:type="object">Etechflow\SeoAudit\Model\Check\Schema\StructuredData</item>
                 <item name="product_duplicate_meta_description" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\DuplicateMetaDescription</item>
                 <item name="product_meta_description_length" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\MetaDescriptionLength</item>
-                <item name="product_missing_image_alt" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\MissingImageAlt</item>
+                <item name="content_image_alt" xsi:type="object">Etechflow\SeoAudit\Model\Check\Content\ImageAlt</item>
                 <item name="onpage_h1" xsi:type="object">Etechflow\SeoAudit\Model\Check\Onpage\Heading</item>
             </argument>
         </arguments>
