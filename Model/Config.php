@@ -8,7 +8,9 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 class Config
 {
     private const P = 'etechflow_seoaudit/general/';
+    private const F = 'etechflow_seoaudit/fetch/';
     private const C = 'etechflow_seoaudit/canonical/';
+    private const I = 'etechflow_seoaudit/indexability/';
 
     public function __construct(private readonly ScopeConfigInterface $scopeConfig)
     {
@@ -44,24 +46,33 @@ class Config
         return (int) ($this->scopeConfig->getValue(self::P . 'thin_description') ?: 150);
     }
 
+    /* ---- shared page-fetch settings (rendered-HTML checks) ---- */
+
+    public function sampleSize(): int
+    {
+        return max(1, min(200, (int) ($this->scopeConfig->getValue(self::F . 'sample_size') ?: 25)));
+    }
+
+    public function fetchBaseUrl(): string
+    {
+        return trim((string) $this->scopeConfig->getValue(self::F . 'base_url'));
+    }
+
+    public function fetchBasicAuth(): ?string
+    {
+        $v = trim((string) $this->scopeConfig->getValue(self::F . 'basic_auth'));
+        return $v !== '' ? $v : null;
+    }
+
+    /* ---- per-check toggles ---- */
+
     public function canonicalCheckEnabled(): bool
     {
         return $this->scopeConfig->isSetFlag(self::C . 'enabled');
     }
 
-    public function canonicalSampleSize(): int
+    public function indexabilityCheckEnabled(): bool
     {
-        return max(1, min(200, (int) ($this->scopeConfig->getValue(self::C . 'sample_size') ?: 25)));
-    }
-
-    public function canonicalFetchBaseUrl(): string
-    {
-        return trim((string) $this->scopeConfig->getValue(self::C . 'fetch_base_url'));
-    }
-
-    public function canonicalBasicAuth(): ?string
-    {
-        $v = trim((string) $this->scopeConfig->getValue(self::C . 'basic_auth'));
-        return $v !== '' ? $v : null;
+        return $this->scopeConfig->isSetFlag(self::I . 'enabled');
     }
 }

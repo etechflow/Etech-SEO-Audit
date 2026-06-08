@@ -17,6 +17,9 @@
                 <item name="links_broken_404" xsi:type="object">Etechflow\SeoAudit\Model\Check\Links\Broken404</item>
                 <item name="links_redirect_chain" xsi:type="object">Etechflow\SeoAudit\Model\Check\Links\RedirectChain</item>
                 <item name="product_canonical_health" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\CanonicalHealth</item>
+                <item name="indexability_noindex" xsi:type="object">Etechflow\SeoAudit\Model\Check\Indexability\Noindex</item>
+                <item name="indexability_robots_blocked" xsi:type="object">Etechflow\SeoAudit\Model\Check\Indexability\RobotsTxt</item>
+                <item name="indexability_sitemap_health" xsi:type="object">Etechflow\SeoAudit\Model\Check\Indexability\SitemapHealth</item>
             </argument>
         </arguments>
     </type>

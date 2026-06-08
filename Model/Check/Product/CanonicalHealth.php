@@ -6,22 +6,15 @@ namespace Etechflow\SeoAudit\Model\Check\Product;
 use Etechflow\SeoAudit\Model\Check\AbstractCheck;
 use Etechflow\SeoAudit\Model\Check\Result;
 use Etechflow\SeoAudit\Model\Config;
+use Etechflow\SeoAudit\Service\HtmlFetcher;
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\UrlInterface;
-use Magento\Store\Model\StoreManagerInterface;
 
 /**
- * The only check in the pool that reads REAL RENDERED HTML over HTTP rather than
- * catalog data at rest — so it catches render-time canonical faults the DB-level
- * checks are structurally blind to. For a sample of product pages it flags:
- *   - no canonical tag
- *   - more than one canonical tag
- *   - a canonical that points to a URL which REDIRECTS (301/302/...) or 404s
- *     (a canonical must resolve to a live 200 URL or Google ignores it).
- *
- * Origins behind Varnish / basic-auth / an edge gate can't be reached at their
- * public URL from the server, so the fetch endpoint (+ optional basic auth) is
- * configurable; left blank it uses the store's secure base URL.
+ * Reads REAL RENDERED HTML (via the shared HtmlFetcher) for a sample of product
+ * pages and validates the canonical tag — catching render-time faults the
+ * DB-level checks are structurally blind to: no canonical, more than one
+ * canonical, or a canonical whose target REDIRECTS (301/302/...) or 404s
+ * (a canonical must resolve to a live 200 URL or Google ignores it).
  */
 class CanonicalHealth extends AbstractCheck
 {
@@ -30,7 +23,7 @@ class CanonicalHealth extends AbstractCheck
     public function __construct(
         ResourceConnection $resource,
         Config $config,
-        private readonly StoreManagerInterface $storeManager
+        private readonly HtmlFetcher $fetcher
     ) {
         parent::__construct($resource, $config);
     }
@@ -44,21 +37,14 @@ class CanonicalHealth extends AbstractCheck
     /** @return Result[] */
     public function run(): array
     {
-        if (!$this->config->canonicalCheckEnabled() || !function_exists('curl_init')) {
+        if (!$this->config->canonicalCheckEnabled() || !$this->fetcher->isAvailable()) {
             return [];
         }
-
-        $store = $this->storeManager->getDefaultStoreView();
-        if (!$store) {
+        $storeId = $this->fetcher->defaultStoreId();
+        if (!$storeId) {
             return [];
         }
-        $storeId    = (int) $store->getId();
-        $publicBase = rtrim((string) $store->getBaseUrl(UrlInterface::URL_TYPE_LINK, true), '/');
-        $host       = (string) parse_url($publicBase, PHP_URL_HOST);
-        $fetchBase  = rtrim($this->config->canonicalFetchBaseUrl() ?: $publicBase, '/');
-        $auth       = $this->config->canonicalBasicAuth();
-
-        $samples = $this->sampleProductPaths($storeId, $this->config->canonicalSampleSize());
+        $samples = $this->sampleProductPaths($storeId, $this->config->sampleSize());
         if (!$samples) {
             return [];
         }
@@ -70,13 +56,13 @@ class CanonicalHealth extends AbstractCheck
             $entityId = (int) $row['entity_id'];
             $path     = ltrim((string) $row['request_path'], '/');
 
-            [$status, $body] = $this->fetch($fetchBase . '/' . $path, $host, $auth, true);
-            if ($status !== 200 || $body === '') {
+            $page = $this->fetcher->get('/' . $path, true);
+            if ($page['status'] !== 200 || $page['body'] === '') {
                 continue;
             }
             $reachable++;
 
-            $canonicals = $this->extractCanonicals($body);
+            $canonicals = $this->extractCanonicals($page['body']);
             $n          = count($canonicals);
 
             if ($n === 0) {
@@ -88,26 +74,20 @@ class CanonicalHealth extends AbstractCheck
                 continue;
             }
 
-            $href         = $canonicals[0];
-            $targetStatus = $this->statusOfCanonicalTarget($href, $host, $fetchBase, $auth);
-            if ($targetStatus === null) {
+            $href   = $canonicals[0];
+            $status = $this->fetcher->get($href, false)['status'];
+            if ($status === 0) {
                 continue;
             }
-            if (in_array($targetStatus, self::REDIRECT_CODES, true)) {
-                $out[] = new Result('product', $entityId, $path, "Canonical points to a URL that REDIRECTS (HTTP {$targetStatus}): {$href} — a canonical must point to a live 200 URL or Google ignores it.", $storeId);
-            } elseif ($targetStatus >= 400) {
-                $out[] = new Result('product', $entityId, $path, "Canonical points to a non-200 URL (HTTP {$targetStatus}): {$href}.", $storeId);
+            if (in_array($status, self::REDIRECT_CODES, true)) {
+                $out[] = new Result('product', $entityId, $path, "Canonical points to a URL that REDIRECTS (HTTP {$status}): {$href} — a canonical must point to a live 200 URL or Google ignores it.", $storeId);
+            } elseif ($status >= 400) {
+                $out[] = new Result('product', $entityId, $path, "Canonical points to a non-200 URL (HTTP {$status}): {$href}.", $storeId);
             }
         }
 
         if ($reachable === 0) {
-            return [new Result(
-                'config',
-                null,
-                $fetchBase,
-                "Canonical check could not fetch any rendered page from {$fetchBase} (origin behind Varnish/basic-auth/edge gate). Set 'Canonical check: fetch base URL' (an internal origin) and optional basic auth under Stores > Config > Etechflow > SEO Audit, then re-run.",
-                $storeId
-            )];
+            return [new Result('config', null, $this->fetcher->resolve('/'), "Canonical check could not fetch any rendered page (origin behind Varnish/basic-auth/edge gate). Set Stores > Config > Etechflow > SEO Audit > Page Fetch (base URL + optional basic auth), then re-run.", $storeId)];
         }
 
         return $out;
@@ -145,55 +125,5 @@ class CanonicalHealth extends AbstractCheck
             }
         }
         return $hrefs;
-    }
-
-    /**
-     * Status of the canonical target WITHOUT following redirects. Same-host
-     * targets are routed through the fetch base so gated origins still resolve.
-     */
-    private function statusOfCanonicalTarget(string $href, string $host, string $fetchBase, ?string $auth): ?int
-    {
-        $hrefHost = (string) parse_url($href, PHP_URL_HOST);
-        if ($hrefHost !== '' && $host !== '' && strcasecmp($hrefHost, $host) === 0) {
-            $path  = (string) parse_url($href, PHP_URL_PATH);
-            $query = (string) parse_url($href, PHP_URL_QUERY);
-            $url   = $fetchBase . $path . ($query !== '' ? '?' . $query : '');
-            [$status] = $this->fetch($url, $host, $auth, false);
-            return $status ?: null;
-        }
-        [$status] = $this->fetch($href, $hrefHost ?: $host, $auth, false);
-        return $status ?: null;
-    }
-
-    /** @return array{0:int,1:string} [httpStatus, body] */
-    private function fetch(string $url, string $host, ?string $auth, bool $followRedirects): array
-    {
-        $headers = ['X-Forwarded-Proto: https', 'Accept: text/html'];
-        if ($host !== '') {
-            $headers[] = 'Host: ' . $host;
-        }
-        $bust = (strpos($url, '?') !== false ? '&' : '?') . '_seoaudit=' . substr(md5($url), 0, 8);
-
-        $ch = curl_init();
-        curl_setopt_array($ch, [
-            CURLOPT_URL            => $url . $bust,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION => $followRedirects,
-            CURLOPT_MAXREDIRS      => 3,
-            CURLOPT_TIMEOUT        => 10,
-            CURLOPT_CONNECTTIMEOUT => 5,
-            CURLOPT_HTTPHEADER     => $headers,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => 0,
-            CURLOPT_USERAGENT      => 'Etechflow-SeoAudit/1.0',
-        ]);
-        if ($auth !== null) {
-            curl_setopt($ch, CURLOPT_USERPWD, $auth);
-        }
-        $body   = (string) curl_exec($ch);
-        $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-        curl_close($ch);
-
-        return [$status, $followRedirects ? $body : ''];
     }
 }

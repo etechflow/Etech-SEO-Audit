@@ -10,12 +10,17 @@
                 <description_max>160</description_max>
                 <thin_description>150</thin_description>
             </general>
+            <fetch>
+                <base_url></base_url>
+                <basic_auth></basic_auth>
+                <sample_size>25</sample_size>
+            </fetch>
             <canonical>
                 <enabled>1</enabled>
-                <sample_size>25</sample_size>
-                <fetch_base_url></fetch_base_url>
-                <basic_auth></basic_auth>
             </canonical>
+            <indexability>
+                <enabled>1</enabled>
+            </indexability>
         </etechflow_seoaudit>
     </default>
 </config>
