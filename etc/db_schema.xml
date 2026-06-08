@@ -9,6 +9,7 @@
         <column xsi:type="int" name="entity_id" unsigned="true" nullable="true" comment="Entity ID"/>
         <column xsi:type="varchar" name="identifier" nullable="true" length="255" comment="SKU/url-key/title for display"/>
         <column xsi:type="text" name="detail" nullable="true" comment="Human-readable detail"/>
+        <column xsi:type="varchar" name="frontend_url" nullable="true" length="500" comment="Frontend URL to view the issue live"/>
         <column xsi:type="varchar" name="check_label" nullable="true" length="255" comment="Check label"/>
         <column xsi:type="varchar" name="fix_hint" nullable="true" length="128" comment="Suite module that fixes it"/>
         <column xsi:type="int" name="store_id" unsigned="true" nullable="false" default="0" comment="Store ID"/>

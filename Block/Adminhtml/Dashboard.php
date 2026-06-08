@@ -67,6 +67,34 @@ class Dashboard extends Template
         $html .= '<div style="margin-top:8px;color:#999;font-size:11px">' . __('Tip: click a count to filter the list below.') . '</div>';
         $html .= '</div></div>';
 
+        $byCheck = $s['by_check'] ?? [];
+        if ($byCheck) {
+            $html .= '<div style="padding:20px;background:#fff;border:1px solid #e3e3e3;border-radius:6px;margin-bottom:20px">'
+                . '<h3 style="margin-top:0">' . __('Fix priority — points you would recover') . '</h3>'
+                . '<table style="width:100%;border-collapse:collapse;font-size:13px">'
+                . '<tr style="text-align:left;color:#888;border-bottom:2px solid #eee">'
+                . '<th style="padding:7px 8px">' . __('Check') . '</th>'
+                . '<th style="padding:7px 8px">' . __('Issues') . '</th>'
+                . '<th style="padding:7px 8px">' . __('Severity') . '</th>'
+                . '<th style="padding:7px 8px;text-align:right">' . __('Score gain if fixed') . '</th>'
+                . '<th style="padding:7px 8px">' . __('Fix with') . '</th></tr>';
+            foreach ($byCheck as $c) {
+                $gain = (int) ($c['score_gain'] ?? 0);
+                $gtxt = $gain > 0 ? '+' . $gain . ' ' . __('pts') : '—';
+                $gcol = $gain >= 5 ? '#1a7f37' : ($gain >= 1 ? '#b8860b' : '#999');
+                $html .= '<tr style="border-bottom:1px solid #f4f4f4">'
+                    . '<td style="padding:7px 8px">' . $this->escapeHtml((string) ($c['label'] ?? $c['code'] ?? '')) . '</td>'
+                    . '<td style="padding:7px 8px">' . (int) ($c['count'] ?? 0) . '</td>'
+                    . '<td style="padding:7px 8px">' . $this->escapeHtml(ucfirst((string) ($c['severity'] ?? ''))) . '</td>'
+                    . '<td style="padding:7px 8px;text-align:right;font-weight:700;color:' . $gcol . '">' . $gtxt . '</td>'
+                    . '<td style="padding:7px 8px;color:#3b5998">' . $this->escapeHtml((string) ($c['fix_hint'] ?? '')) . '</td>'
+                    . '</tr>';
+            }
+            $html .= '</table>'
+                . '<div style="margin-top:8px;color:#999;font-size:11px">' . __('Each row shows how many points the score recovers if that check is cleared. Open the grid below and use “View on site” to see each issue live.') . '</div>'
+                . '</div>';
+        }
+
         return $html . $this->filterScript();
     }
 

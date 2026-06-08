@@ -2,6 +2,13 @@
 
 All notable changes to this module are documented here.
 
+## v1.5.0 — 2026-06-08
+
+Two dashboard improvements so findings are actionable:
+
+- **Score impact per check** — the scan summary now carries a `by_check` breakdown with the exact **score points each check would recover if fixed** (`ScoreCalculator::pointsFor()`), and the admin dashboard renders a "Fix priority" table sorted by recoverable points. You can see at a glance that, e.g., fixing meta-title lengths is worth +20 and social tags +1.
+- **Open each issue on the live site** — every finding now stores a resolved `frontend_url` (new column), and the issue grid adds a **"View on site"** action next to "Edit". Product/category URLs are batch-resolved from `url_rewrite`; rendered-check findings use their path. So a merchant can jump from any finding straight to the live page and see the problem.
+
 ## v1.4.1 — 2026-06-08
 
 Fixed a false-positive: the image-alt check now reads **rendered HTML** instead of the `image_label` DB attribute. The old check (`product_missing_image_alt`) flagged every product with an empty `image_label`, but most themes (Hyvä, Luma) fall back to the product **name** for the `<img alt>`, so an empty label rarely means a truly missing alt — it over-reported badly (e.g. ~2,900 false notices on a Hyvä store). Replaced with `content_image_alt`: it samples product pages and flags a page only when a product image is present but **neither** a gallery caption/label **nor** an `<img alt>` supplies alt text (gated by the same on-page/page-fetch settings as the H1 check).

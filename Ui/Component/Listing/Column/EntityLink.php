@@ -33,7 +33,14 @@ class EntityLink extends Column
         foreach ($dataSource['data']['items'] as &$item) {
             $url = $this->buildUrl((string) ($item['entity_type'] ?? ''), (int) ($item['entity_id'] ?? 0));
             if ($url !== null) {
-                $item[$name] = ['view' => ['href' => $url, 'label' => __('Open')]];
+                $item[$name]['edit'] = ['href' => $url, 'label' => __('Edit')];
+            }
+            if (!empty($item['frontend_url'])) {
+                $item[$name]['view_live'] = [
+                    'href'   => (string) $item['frontend_url'],
+                    'label'  => __('View on site'),
+                    'target' => '_blank',
+                ];
             }
         }
         return $dataSource;

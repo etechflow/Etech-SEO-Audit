@@ -13,6 +13,8 @@ use Magento\Framework\App\ResourceConnection;
  */
 class ScoreCalculator
 {
+    public const WEIGHTS = ['critical' => 3.0, 'warning' => 1.0, 'notice' => 0.3];
+
     public function __construct(private readonly ResourceConnection $resource)
     {
     }
@@ -30,6 +32,16 @@ class ScoreCalculator
         $score = 100 - (int) round(($penalty / $entities) * 100);
 
         return max(0, min(100, $score));
+    }
+
+    /**
+     * Score points that would be recovered by fixing $count issues of $severity.
+     */
+    public function pointsFor(int $count, string $severity): int
+    {
+        $w = self::WEIGHTS[$severity] ?? 0.0;
+        $entities = max(1, $this->entityCount());
+        return (int) round(($count * $w / $entities) * 100);
     }
 
     protected function entityCount(): int
