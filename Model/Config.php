@@ -1,113 +1,96 @@
 <?php
 declare(strict_types=1);
 
-namespace ETechFlow\SeoLayeredNav\Model;
+namespace Etechflow\SeoAudit\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\ScopeInterface;
 
-/**
- * Thin config reader. The single gate for the whole feature: while disabled,
- * every storefront plugin returns immediately, so the module is inert.
- */
 class Config
 {
-    private const XML_ENABLED = 'etechflow_seonav/general/enabled';
-    private const XML_URL_FORMAT = 'etechflow_seonav/general/url_format';
+    private const P = 'etechflow_seoaudit/general/';
+    private const F = 'etechflow_seoaudit/fetch/';
+    private const C = 'etechflow_seoaudit/canonical/';
+    private const I = 'etechflow_seoaudit/indexability/';
+    private const S = 'etechflow_seoaudit/social/';
+    private const G = 'etechflow_seoaudit/schema/';
+    private const O = 'etechflow_seoaudit/onpage/';
 
-    public const URL_FORMAT_QUERY = 'query';
-    public const URL_FORMAT_PATH = 'path';
-
-    private const XML_MULTISELECT = 'etechflow_seonav/general/multiselect';
-    private const XML_MANAGE_META = 'etechflow_seonav/seo/manage_meta';
-    private const XML_SINGLE_INDEXABLE = 'etechflow_seonav/seo/single_filter_indexable';
-    private const XML_INDEXABLE_ATTRS = 'etechflow_seonav/seo/indexable_attributes';
-    private const XML_MULTI_ROBOTS = 'etechflow_seonav/seo/multi_filter_robots';
-    private const XML_SITEMAP_FILTER_PAGES = 'etechflow_seonav/seo/sitemap_filter_pages';
-    private const XML_NOINDEX_PAGINATION = 'etechflow_seonav/seo/noindex_pagination';
-
-    public function __construct(
-        private readonly ScopeConfigInterface $scopeConfig
-    ) {
+    public function __construct(private readonly ScopeConfigInterface $scopeConfig)
+    {
     }
 
-    /** Phase 1: rewrite filter URLs to readable slugs. */
-    public function isEnabled(?int $storeId = null): bool
+    public function isEnabled(): bool
     {
-        return $this->flag(self::XML_ENABLED, $storeId);
+        return $this->scopeConfig->isSetFlag(self::P . 'enabled');
     }
 
-    /** Phase 3: 'query' (?manufacturer=yale) or 'path' (/category/manufacturer/yale). */
-    public function getUrlFormat(?int $storeId = null): string
+    public function titleMin(): int
     {
-        $v = (string) $this->scopeConfig->getValue(
-            self::XML_URL_FORMAT,
-            ScopeInterface::SCOPE_STORE,
-            $storeId
-        );
-        return $v === self::URL_FORMAT_PATH ? self::URL_FORMAT_PATH : self::URL_FORMAT_QUERY;
+        return (int) ($this->scopeConfig->getValue(self::P . 'title_min') ?: 20);
     }
 
-    public function isPathFormat(?int $storeId = null): bool
+    public function titleMax(): int
     {
-        return $this->getUrlFormat($storeId) === self::URL_FORMAT_PATH;
+        return (int) ($this->scopeConfig->getValue(self::P . 'title_max') ?: 60);
     }
 
-    /** Multi-select layered nav (disjunctive facets + click-to-add). */
-    public function isMultiselect(?int $storeId = null): bool
+    public function descriptionMin(): int
     {
-        return $this->flag(self::XML_MULTISELECT, $storeId);
+        return (int) ($this->scopeConfig->getValue(self::P . 'description_min') ?: 70);
     }
 
-    /** Phase 2 master switch: manage canonical/robots on filter pages. */
-    public function managesMeta(?int $storeId = null): bool
+    public function descriptionMax(): int
     {
-        return $this->flag(self::XML_MANAGE_META, $storeId);
+        return (int) ($this->scopeConfig->getValue(self::P . 'description_max') ?: 160);
     }
 
-    public function singleFilterIndexable(?int $storeId = null): bool
+    public function thinDescription(): int
     {
-        return $this->flag(self::XML_SINGLE_INDEXABLE, $storeId);
+        return (int) ($this->scopeConfig->getValue(self::P . 'thin_description') ?: 150);
     }
 
-    /** @return array<int,string> attribute codes allowed to be indexable (empty = all). */
-    public function indexableAttributes(?int $storeId = null): array
+    /* ---- shared page-fetch settings (rendered-HTML checks) ---- */
+
+    public function sampleSize(): int
     {
-        $raw = (string) $this->scopeConfig->getValue(
-            self::XML_INDEXABLE_ATTRS,
-            ScopeInterface::SCOPE_STORE,
-            $storeId
-        );
-        if (trim($raw) === '') {
-            return [];
-        }
-        return array_values(array_filter(array_map('trim', preg_split('~[,\s]+~', $raw) ?: [])));
+        return max(1, min(200, (int) ($this->scopeConfig->getValue(self::F . 'sample_size') ?: 25)));
     }
 
-    /** Emit indexable single-filter landing pages into the XML sitemap. */
-    public function sitemapFilterPages(?int $storeId = null): bool
+    public function fetchBaseUrl(): string
     {
-        return $this->flag(self::XML_SITEMAP_FILTER_PAGES, $storeId);
+        return trim((string) $this->scopeConfig->getValue(self::F . 'base_url'));
     }
 
-    /** Add NOINDEX,FOLLOW to paginated listing pages (?p=2+). */
-    public function noindexPagination(?int $storeId = null): bool
+    public function fetchBasicAuth(): ?string
     {
-        return $this->flag(self::XML_NOINDEX_PAGINATION, $storeId);
+        $v = trim((string) $this->scopeConfig->getValue(self::F . 'basic_auth'));
+        return $v !== '' ? $v : null;
     }
 
-    public function multiFilterRobots(?int $storeId = null): string
+    /* ---- per-check toggles ---- */
+
+    public function canonicalCheckEnabled(): bool
     {
-        $v = (string) $this->scopeConfig->getValue(
-            self::XML_MULTI_ROBOTS,
-            ScopeInterface::SCOPE_STORE,
-            $storeId
-        );
-        return $v !== '' ? $v : 'NOINDEX,FOLLOW';
+        return $this->scopeConfig->isSetFlag(self::C . 'enabled');
     }
 
-    private function flag(string $path, ?int $storeId): bool
+    public function indexabilityCheckEnabled(): bool
     {
-        return $this->scopeConfig->isSetFlag($path, ScopeInterface::SCOPE_STORE, $storeId);
+        return $this->scopeConfig->isSetFlag(self::I . 'enabled');
+    }
+
+    public function socialCheckEnabled(): bool
+    {
+        return $this->scopeConfig->isSetFlag(self::S . 'enabled');
+    }
+
+    public function schemaCheckEnabled(): bool
+    {
+        return $this->scopeConfig->isSetFlag(self::G . 'enabled');
+    }
+
+    public function onpageCheckEnabled(): bool
+    {
+        return $this->scopeConfig->isSetFlag(self::O . 'enabled');
     }
 }

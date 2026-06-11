@@ -1,27 +1,35 @@
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
-        <etechflow_seonav>
+        <etechflow_seoaudit>
             <general>
-                <!-- OFF by default: storefront URLs are untouched until a merchant opts in
-                     AND aliases have been generated. Safe to deploy with no visible change. -->
                 <enabled>0</enabled>
-                <!-- query = ?manufacturer=yale ; path = /category/manufacturer/yale -->
-                <url_format>query</url_format>
-                <!-- multi-select layered nav (disjunctive facets + click-to-add) -->
-                <multiselect>0</multiselect>
+                <title_min>20</title_min>
+                <title_max>60</title_max>
+                <description_min>70</description_min>
+                <description_max>160</description_max>
+                <thin_description>150</thin_description>
             </general>
-            <seo>
-                <!-- Phase 2: canonical/robots on filter pages. Gated SEPARATELY from
-                     readable URLs, so turning on slugs never changes indexing by itself. -->
-                <manage_meta>0</manage_meta>
-                <single_filter_indexable>1</single_filter_indexable>
-                <indexable_attributes/>
-                <multi_filter_robots>NOINDEX,FOLLOW</multi_filter_robots>
-                <sitemap_filter_pages>0</sitemap_filter_pages>
-                <noindex_pagination>1</noindex_pagination>
-            </seo>
-        </etechflow_seonav>
+            <fetch>
+                <base_url></base_url>
+                <basic_auth></basic_auth>
+                <sample_size>25</sample_size>
+            </fetch>
+            <canonical>
+                <enabled>1</enabled>
+            </canonical>
+            <indexability>
+                <enabled>1</enabled>
+            </indexability>
+            <social>
+                <enabled>1</enabled>
+            </social>
+            <schema>
+                <enabled>1</enabled>
+            </schema>
+            <onpage>
+                <enabled>1</enabled>
+            </onpage>
+        </etechflow_seoaudit>
     </default>
 </config>

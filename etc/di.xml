@@ -1,25 +1,51 @@
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="Magento\Framework\Console\CommandListInterface">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Etechflow\SeoAudit\Model\Scanner">
         <arguments>
-            <argument name="commands" xsi:type="array">
-                <item name="etechflow_seonav_generate_aliases" xsi:type="object">ETechFlow\SeoLayeredNav\Console\Command\GenerateAliases</item>
+            <argument name="checks" xsi:type="array">
+                <item name="product_missing_meta_title" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\MissingMetaTitle</item>
+                <item name="product_missing_meta_description" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\MissingMetaDescription</item>
+                <item name="product_duplicate_meta_title" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\DuplicateMetaTitle</item>
+                <item name="product_meta_title_length" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\MetaTitleLength</item>
+                <item name="product_thin_description" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\ThinDescription</item>
+                <item name="product_missing_image" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\MissingImage</item>
+                <item name="product_orphaned" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\OrphanedProduct</item>
+                <item name="category_empty" xsi:type="object">Etechflow\SeoAudit\Model\Check\Category\EmptyCategory</item>
+                <item name="category_missing_meta_title" xsi:type="object">Etechflow\SeoAudit\Model\Check\Category\MissingMetaTitle</item>
+                <item name="category_missing_meta_description" xsi:type="object">Etechflow\SeoAudit\Model\Check\Category\MissingMetaDescription</item>
+                <item name="cms_missing_meta_title" xsi:type="object">Etechflow\SeoAudit\Model\Check\Cms\MissingMetaTitle</item>
+                <item name="links_broken_404" xsi:type="object">Etechflow\SeoAudit\Model\Check\Links\Broken404</item>
+                <item name="links_redirect_chain" xsi:type="object">Etechflow\SeoAudit\Model\Check\Links\RedirectChain</item>
+                <item name="product_canonical_health" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\CanonicalHealth</item>
+                <item name="indexability_noindex" xsi:type="object">Etechflow\SeoAudit\Model\Check\Indexability\Noindex</item>
+                <item name="indexability_robots_blocked" xsi:type="object">Etechflow\SeoAudit\Model\Check\Indexability\RobotsTxt</item>
+                <item name="indexability_sitemap_health" xsi:type="object">Etechflow\SeoAudit\Model\Check\Indexability\SitemapHealth</item>
+                <item name="social_open_graph" xsi:type="object">Etechflow\SeoAudit\Model\Check\Social\OpenGraph</item>
+                <item name="schema_product_jsonld" xsi:type="object">Etechflow\SeoAudit\Model\Check\Schema\StructuredData</item>
+                <item name="product_duplicate_meta_description" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\DuplicateMetaDescription</item>
+                <item name="product_meta_description_length" xsi:type="object">Etechflow\SeoAudit\Model\Check\Product\MetaDescriptionLength</item>
+                <item name="content_image_alt" xsi:type="object">Etechflow\SeoAudit\Model\Check\Content\ImageAlt</item>
+                <item name="onpage_h1" xsi:type="object">Etechflow\SeoAudit\Model\Check\Onpage\Heading</item>
             </argument>
         </arguments>
     </type>
-
-    <!-- Phase 2.5: feed indexable filter landing pages into the XML sitemap -->
-    <type name="ETechFlow\SeoLayeredNav\Model\Sitemap\FilterPageItemProvider">
+    <type name="Magento\Framework\Console\CommandList">
         <arguments>
-            <!-- reuse the core category priority/changefreq config -->
-            <argument name="configReader" xsi:type="object">Magento\Sitemap\Model\ItemProvider\CategoryConfigReader</argument>
+            <argument name="commands" xsi:type="array">
+                <item name="etechflow_seoaudit_scan" xsi:type="object">Etechflow\SeoAudit\Console\Command\ScanCommand</item>
+            </argument>
         </arguments>
     </type>
-    <type name="Magento\Sitemap\Model\ItemProvider\Composite">
+    <virtualType name="Etechflow\SeoAudit\Model\ResourceModel\Issue\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
-            <argument name="itemProviders" xsi:type="array">
-                <item name="etechflowFilterPagesProvider" xsi:type="object">ETechFlow\SeoLayeredNav\Model\Sitemap\FilterPageItemProvider</item>
+            <argument name="mainTable" xsi:type="string">etechflow_seoaudit_issue</argument>
+            <argument name="resourceModel" xsi:type="string">Etechflow\SeoAudit\Model\ResourceModel\Issue</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="etechflow_seoaudit_issue_listing_data_source" xsi:type="string">Etechflow\SeoAudit\Model\ResourceModel\Issue\Grid\Collection</item>
             </argument>
         </arguments>
     </type>
