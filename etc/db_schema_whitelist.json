@@ -1,25 +1,19 @@
 {
-    "etechflow_seoaudit_issue": {
+    "etechflow_seo_filter_alias": {
         "column": {
-            "issue_id": true,
-            "check_code": true,
-            "category": true,
-            "severity": true,
-            "entity_type": true,
-            "entity_id": true,
-            "identifier": true,
-            "detail": true,
+            "alias_id": true,
+            "attribute_id": true,
+            "option_id": true,
             "store_id": true,
-            "created_at": true,
-            "check_label": true,
-            "fix_hint": true
-        },
-        "constraint": {
-            "PRIMARY": true
+            "alias": true
         },
         "index": {
-            "ETECHFLOW_SEOAUDIT_ISSUE_CHECK_SEVERITY": true,
-            "ETECHFLOW_SEOAUDIT_ISSUE_ENTITY": true
+            "ETECHFLOW_SEO_FILTER_ALIAS_ATTRIBUTE_ID_STORE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "ETECHFLOW_SEO_FILTER_ALIAS_ATTRIBUTE_ID_STORE_ID_ALIAS": true,
+            "ETECHFLOW_SEO_FILTER_ALIAS_ATTRIBUTE_ID_STORE_ID_OPTION_ID": true
         }
     }
 }

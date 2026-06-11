@@ -1,91 +1,82 @@
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <tab id="etechflow" translate="label" sortOrder="400">
-            <label>Etechflow</label>
+            <label>eTechFlow</label>
         </tab>
-        <section id="etechflow_seoaudit" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
-            <label>SEO Audit</label>
+        <section id="etechflow_seonav" translate="label" type="text" sortOrder="910"
+                 showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>SEO Layered Navigation</label>
             <tab>etechflow</tab>
-            <resource>Etechflow_SeoAudit::config</resource>
-            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1">
-                <label>Thresholds</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1">
-                    <label>Enable</label>
+            <resource>Magento_Catalog::config_catalog</resource>
+            <group id="general" translate="label" type="text" sortOrder="10"
+                   showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable readable filter URLs</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Master switch for the audit feature.</comment>
+                    <comment><![CDATA[When enabled, layered-navigation filter links use human-readable slugs (e.g. <em>?manufacturer=yale</em>) instead of option ids (<em>?manufacturer=2069</em>). Run <code>bin/magento etechflow:seo-nav:generate-aliases</code> first to build the slug map.]]></comment>
                 </field>
-                <field id="title_min" translate="label" type="text" sortOrder="20" showInDefault="1">
-                    <label>Meta title min length</label>
+                <field id="url_format" translate="label comment" type="select" sortOrder="20"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>URL format</label>
+                    <source_model>ETechFlow\SeoLayeredNav\Model\Source\UrlFormat</source_model>
+                    <comment><![CDATA[<strong>Query</strong>: <em>/cylinder-locks?manufacturer=yale</em>. <strong>Path</strong>: <em>/cylinder-locks/manufacturer/yale</em> (cleaner, no query string). Path needs no rewrite generation — it is resolved live by a router.]]></comment>
+                    <depends><field id="enabled">1</field></depends>
                 </field>
-                <field id="title_max" translate="label" type="text" sortOrder="30" showInDefault="1">
-                    <label>Meta title max length</label>
-                </field>
-                <field id="description_min" translate="label" type="text" sortOrder="40" showInDefault="1">
-                    <label>Meta description min length</label>
-                </field>
-                <field id="description_max" translate="label" type="text" sortOrder="50" showInDefault="1">
-                    <label>Meta description max length</label>
-                </field>
-                <field id="thin_description" translate="label" type="text" sortOrder="60" showInDefault="1">
-                    <label>Thin product description threshold (chars)</label>
+                <field id="multiselect" translate="label comment" type="select" sortOrder="30"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Multi-select layered navigation</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Lets shoppers pick several values of one filter (e.g. two brands) and see the combined results — options stay clickable instead of collapsing. Uses disjunctive faceting (one extra search query per active filter; category pages are block-cached).]]></comment>
+                    <depends><field id="enabled">1</field></depends>
                 </field>
             </group>
-            <group id="fetch" translate="label" type="text" sortOrder="20" showInDefault="1">
-                <label>Page Fetch (rendered-HTML checks)</label>
-                <comment>Used by the checks that read live HTML (canonical, indexability). Sampled, on-demand.</comment>
-                <field id="sample_size" translate="label" type="text" sortOrder="10" showInDefault="1">
-                    <label>Sample size (pages to fetch)</label>
-                    <comment>Pages fetched per rendered check (1-200). HTTP-based, so keep it modest.</comment>
-                </field>
-                <field id="base_url" translate="label" type="text" sortOrder="20" showInDefault="1">
-                    <label>Fetch base URL (optional)</label>
-                    <comment><![CDATA[Internal origin to fetch from when the public URL is behind Varnish / basic-auth / an edge gate, e.g. <code>http://varnish:80</code>. Leave blank to use the store's secure base URL. The store domain is sent as the Host header.]]></comment>
-                </field>
-                <field id="basic_auth" translate="label" type="obscure" sortOrder="30" showInDefault="1">
-                    <label>Basic auth (optional, user:pass)</label>
-                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-                    <comment>HTTP basic-auth credentials for a gated origin, as user:pass.</comment>
-                </field>
-            </group>
-            <group id="canonical" translate="label" type="text" sortOrder="30" showInDefault="1">
-                <label>Canonical Health Check</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1">
-                    <label>Enable canonical check</label>
+            <group id="seo" translate="label comment" type="text" sortOrder="20"
+                   showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Filter Page Indexing (canonical &amp; robots)</label>
+                <comment><![CDATA[Controls the <code>&lt;link rel="canonical"&gt;</code> and <code>&lt;meta name="robots"&gt;</code> on filtered category pages. Only touches category pages that have an active filter — all other pages are left exactly as they are (incl. any existing SEO module).]]></comment>
+                <field id="manage_meta" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Manage canonical &amp; robots on filter pages</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Fetches sample product pages and flags missing / duplicate / redirecting canonicals.</comment>
+                    <comment>Master switch for everything in this section. Off = no change to any page meta.</comment>
                 </field>
-            </group>
-            <group id="indexability" translate="label" type="text" sortOrder="40" showInDefault="1">
-                <label>Indexability Checks</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1">
-                    <label>Enable indexability checks</label>
+                <field id="single_filter_indexable" translate="label comment" type="select" sortOrder="20"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Make single-filter pages indexable</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Flags pages hidden from Google (noindex), live URLs blocked by robots.txt, and dead/redirecting URLs in the XML sitemap.</comment>
+                    <comment>A page with exactly one attribute filter (e.g. <em>?manufacturer=yale</em>) gets INDEX,FOLLOW + a self-canonical, becoming its own landing page. Off = treat single filters like multi.</comment>
+                    <depends><field id="manage_meta">1</field></depends>
                 </field>
-            </group>
-            <group id="social" translate="label" type="text" sortOrder="50" showInDefault="1">
-                <label>Social Tags Check</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1">
-                    <label>Enable social tags check</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Flags product pages missing Open Graph / Twitter Card tags, or an og:url on the wrong domain.</comment>
+                <field id="indexable_attributes" translate="label comment" type="textarea" sortOrder="30"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Limit indexable filters to these attributes</label>
+                    <comment>Comma-separated attribute codes (e.g. <em>manufacturer,collection</em>). Blank = any single attribute filter is indexable.</comment>
+                    <depends><field id="manage_meta">1</field><field id="single_filter_indexable">1</field></depends>
                 </field>
-            </group>
-            <group id="schema" translate="label" type="text" sortOrder="60" showInDefault="1">
-                <label>Structured Data Check</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1">
-                    <label>Enable structured-data check</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Flags product pages with no Product JSON-LD structured data.</comment>
+                <field id="multi_filter_robots" translate="label comment" type="select" sortOrder="40"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Robots for multi-filter / non-indexable pages</label>
+                    <source_model>ETechFlow\SeoLayeredNav\Model\Source\RobotsMode</source_model>
+                    <comment>Applied to pages with 2+ filters, a price filter, or a non-indexable single filter. Canonical points to the base category.</comment>
+                    <depends><field id="manage_meta">1</field></depends>
                 </field>
-            </group>
-            <group id="onpage" translate="label" type="text" sortOrder="70" showInDefault="1">
-                <label>On-page Check (H1)</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1">
-                    <label>Enable H1 check</label>
+                <field id="sitemap_filter_pages" translate="label comment" type="select" sortOrder="50"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Add indexable filter pages to XML sitemap</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Fetches sample product pages and flags a missing or duplicate H1 heading.</comment>
+                    <comment>Emits the single-filter landing pages into the sitemap so search engines discover them. Only the whitelisted attributes above, and only category+value pairs that have products. Leave the whitelist blank = nothing emitted.</comment>
+                    <depends><field id="manage_meta">1</field><field id="single_filter_indexable">1</field></depends>
+                </field>
+                <field id="noindex_pagination" translate="label comment" type="select" sortOrder="60"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>NOINDEX paginated pages (?p=2, ?p=3 …)</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Adds NOINDEX,FOLLOW to listing pages beyond page 1 (crawl-budget best practice; the modern replacement for rel=prev/next, which Google retired in 2019). Canonical still points to page 1.</comment>
+                    <depends><field id="manage_meta">1</field></depends>
                 </field>
             </group>
         </section>
